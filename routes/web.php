@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PersonController;
+use App\Http\Controllers\StorageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Person;
@@ -19,6 +20,15 @@ use App\Models\Person;
 Route::get('/', function () {
     return view('welcome');
 }); 
-Route::get("/people", [PersonController::class, "getAllPerson"]);
-Route::get("/people/{person}", [PersonController::class, "getPersonById"]);
-Route::post("/people", [PersonController::class, "createPerson"]);
+Route::name("people.")->prefix('/people')->group(function () {
+    Route::get("", [PersonController::class, "getAllPerson"])->name("getAllPerson");
+    Route::get("/{person}", [PersonController::class, "getPersonById"])->name("getPersonById");
+    Route::post("", [PersonController::class, "createPerson"])->name("createPerson");    
+    Route::put("/{person}", [PersonController::class, "updatePerson"])->name("updatePerson");
+    Route::delete("/{person}", [PersonController::class, "deletePerson"])->name("deletePerson");
+});
+
+Route::name("storage.")->prefix("/storage")->group(function () {
+    Route::get("/uploads/{filename}", [StorageController::class, "showFile"])->name("showFile");
+    Route::post("/upload", [StorageController::class, "uploadFile"])->name("uploadFile");
+});
